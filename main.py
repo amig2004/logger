@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, url_for
+from flask import Flask, Blueprint, url_for, request
 from flask import Response
 import json
 import pymysql
@@ -22,7 +22,7 @@ try:
     print("INFO: database loaded")
 
 except Exception as e:
-    print('DB Error: ', e)
+    print('DB ERROR: ', e)
     exit(-1)
 
 app = Flask(__name__)
@@ -48,13 +48,16 @@ def tags():
         tagslist = []
 
         #obtain data from db
-        cursor.execute('SELECT * FROM tags')
-        tags = cursor.fetchall()
+        db.execute('SELECT * FROM tags')
+        tags = db.fetchall()
         for row in tags:
-            tagslist.append(dict.fromkeys(fields, row))
+            tagslist.append(
+                dict(zip(fields, row))
+                )
         
+        resp_value = str()
         return Response(
-            json.dump(tagslist, indent=4), 
+            json.dumps(tagslist, indent=4), 
             status=200
             )
 
@@ -65,9 +68,13 @@ def tags():
 
         # if data is correct -> insert to database
         # TODO special marks detection, to avoid sql injection etc.
-        if utils.checkData(data, fields)
-            cursor.execute(f'INSERT INTO tags (name) VALUES {data.name}'')
-            
+        if utils.checkData(data, fields):
+            # try block to avoid crashing if mysql insert fails
+            try:
+                db.execute(f'INSERT INTO tags (name) VALUES {data.name}')
+            except Exception as e:
+                return Response(e, status=500)
+
             return Response(status=201)
         else:
             return Response(status=400)
@@ -93,8 +100,6 @@ def logs():
 
 
 if __name__ == '__main__':
-    for rule in app.url_map.iter_rules():
-        print(rule.endpoint)
     app.run(debug=True)
 
     dbahndler.close()
