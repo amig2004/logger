@@ -4,9 +4,9 @@ Modeon
 ## Uruchomienie
 1. Po sklonowaniu repozytorium, skopiuj plik **config.json** z maila
 do katalogu z Dockerfile a następnie zbuduj obraz
-`docker build . backend:andrzej`
+`docker build . -t andrzej:backend`
 
-2. Uruchom dockera: `docker run . -p 5000:5000/tcp -p 5000:5000/udp`
+2. Uruchom dockera: `docker run --name logger -p 5000:5000/tcp -p 5000:5000/udp andrzej:backend`
 3. Po uruchomieniu obrazu wykonaj: `curl localhost:5000` 
 4. Zobaczysz JSON z dostępnymi endpointami
 
