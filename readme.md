@@ -1,6 +1,7 @@
 # Logger by andrzej
-## Modeon
+Modeon
 
+## Uruchomienie
 1. Po sklonowaniu repozytorium, skopiuj plik **config.json** z maila
 do katalogu z Dockerfile a następnie zbuduj obraz
 `docker build . backend:andrzej`
