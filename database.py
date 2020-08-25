@@ -1,8 +1,8 @@
 import pymysql
 from flask import current_app, g
+import json
 
 def prepare_db():
-    print('HOST: ', current_app.config['DATABASE']['host'])
     try:
         if 'dbhandler' not in g:
             g.dbhandler = pymysql.connect(
@@ -11,7 +11,7 @@ def prepare_db():
                 password=current_app.config['DATABASE']['pass'],
                 database=current_app.config['DATABASE']['dbname']
                 )
-            g.db = dbahndler.cursor()
+            g.db = g.dbhandler.cursor()
             print("INFO: database loaded")
             return g.db
     
@@ -19,9 +19,10 @@ def prepare_db():
         print('DB ERROR: ', e)
         exit(-1)
 
-def disconnect_db():
+def disconnect_db(e=None):
     if hasattr(g, 'db'):
         g.db.close()
+        print('DB CLOSED')
 
 def init_app(app):
     app.teardown_appcontext(disconnect_db)
