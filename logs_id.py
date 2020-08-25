@@ -20,13 +20,11 @@ def logs_id(id):
             where lg.id={str(id)};""")
 
         log = db.fetchone()
-        print(log)
         db.execute(f"""
-        SELECT * FROM comments where log_id={id} group by parent_id order by id desc
+        SELECT id,log_id, person_id, parent_id, DATE_FORMAT(created, '%Y-%m-%d %T') created, content FROM comments where log_id={str(id)} order by id;
         """)
         comments = db.fetchall()
-        print(type(log))
-        print(comments)
+    
         resp_body = dict(zip(fields, log))
         resp_body['comments'] = [dict(zip(fields_comments, row)) for row in comments]
 
@@ -44,7 +42,7 @@ def logs_id(id):
         if utils.checkData(data, fields):
             # try block to avoid crashing if mysql insert fails
             try:
-                print('try block')
+                
                 query = f"""
                 insert into comments
                 (log_id,person_id,parent_id,created,content) 
@@ -53,12 +51,12 @@ def logs_id(id):
                     {str(data['person_id'])},
                     {str(data['parent_id'])},
                     NOW(),
-                    '{str(data['content_id'])}');
+                    '{str(data['content'])}');
                 """
                 print(query)
-                #g.db.execute(query)
+                g.db.execute(query)
 
-                #g.dbhandler.commit()
+                g.dbhandler.commit()
                 return Response(status=201)
             except Exception as e:
                 return Response(e, status=500)

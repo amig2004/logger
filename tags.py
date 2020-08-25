@@ -32,19 +32,15 @@ def tags():
         # delete id ( marked as AI in db, not req)
         fields = ['name']
         data = request.json
-        print('TAG TYPE:', type(data))
-        print('NEW TAG:', data)
         # if data is correct -> insert to database
         # TODO special marks detection, to avoid sql injection etc.
         if utils.checkData(data, fields):
             # try block to avoid crashing if mysql insert fails
             try:
-                print('TRY BLCOK')
                 g.db.execute(f"insert into tags (name) values ('{data['name']}');")
                 g.dbhandler.commit()
                 return Response(status=201)
             except Exception as e:
-                print('EXCEPTION block')
                 return Response(e, status=500)
 
             
