@@ -11,19 +11,18 @@ def persons():
     fields = ['id', 'name']
     if request.method == 'GET':
         db = prepare_db()
-        tagslist = []
+        personslist = []
 
         #obtain data from db
         db.execute('SELECT * FROM persons')
-        tags = db.fetchall()
-        for row in tags:
-            tagslist.append(
+        persons = db.fetchall()
+        for row in persons:
+            personslist.append(
                 dict(zip(fields, row))
                 )
         
-        resp_value = str()
         return Response(
-            json.dumps(tagslist, indent=4), 
+            json.dumps(personslist, indent=4), 
             status=200
             )
 
