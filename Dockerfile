@@ -10,7 +10,12 @@ COPY views /backend/views
 COPY main.py /backend/main.py
 COPY config.json /backend/config.json
 
+#prepare environment vars
+ENV flask_app=main.py
+
 # expose port
 EXPOSE 5000
 
-ENTRYPOINT [ "/bin/bash" ]
+CMD python main.py
+
+#ENTRYPOINT [ "/bin/bash" ]
